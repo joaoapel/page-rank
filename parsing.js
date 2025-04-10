@@ -7,7 +7,7 @@ const client = new language.LanguageServiceClient();
  // https://www.tenhomaisdiscosqueamigos.com/2024/04/03/musicas-referencias-outros-artistas/
 
 
-process.env.GOOGLE_APPLICATION_CREDENTIALS='./curious-sandbox-456314-a8-490f7fb376f0.json'
+process.env.GOOGLE_APPLICATION_CREDENTIALS='/home/joao/Documentos/chave-api/curious-sandbox-456314-a8-490f7fb376f0.json'
 
 const text = `Há muito tempo tá rolando essa festa maneira
 Da música popular brasileira
