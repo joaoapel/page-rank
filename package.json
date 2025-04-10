@@ -1,5 +1,5 @@
 {
-  "name": "codigo",
+  "name": "code",
   "version": "1.0.0",
   "description": "Esta é uma implementação baseada no vídeo Barry Van Veen [Network Graphs and Page Rank Algorithm](https://www.youtube.com/watch?v=ztc6sYgapwA).",
   "main": "index.js",
@@ -8,16 +8,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joaoapel/estudo-page-rank.git"
+    "url": "git+https://github.com/joaoapel/page-rank.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/joaoapel/estudo-page-rank/issues"
+    "url": "https://github.com/joaoapel/page-rank/issues"
   },
-  "homepage": "https://github.com/joaoapel/estudo-page-rank#readme",
+  "homepage": "https://github.com/joaoapel/page-rank#readme",
   "dependencies": {
-    "mathjs": "^14.4.0"
+    "@google-cloud/language": "^7.0.1"
   }
 }
