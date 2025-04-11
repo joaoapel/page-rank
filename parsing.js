@@ -21,11 +21,24 @@ async function parseEntidades(letra) {
       return entidade.type = 'PERSON'
     }).map(user => user.name);
 
-    return console.log(listaFiltrada)
+    return listaFiltrada
 
   } catch (error) { console.log('Erro no parsing :/'); }
 }
 
-const listaParseada = musicas.musicas.map(elemento => [{artista: elemento.artista, entidades: parseEntidades(elemento.letra)}])
+async function listaParseada() {
+  const resultados = await Promise.all(
+    musicas.musicas.map(async elemento => {
+      const entidades = await parseEntidades(elemento.letra);
+      return {
+        artista: elemento.artista,
+        entidades: entidades,
+      };
+    })
+  );
+  return resultados;
+}
 
-console.log(listaParseada)
+listaParseada().then(data => {
+  console.log(data);
+});
