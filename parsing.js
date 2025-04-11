@@ -1,6 +1,6 @@
 const language = require('@google-cloud/language').v2;
 
-const musicas = require('./musicas')
+const musicas = require('./musicas_link')
 
 const client = new language.LanguageServiceClient();
 
@@ -28,7 +28,7 @@ async function parseEntidades(letra) {
 
 async function listaParseada() {
   const resultados = await Promise.all(
-    musicas.musicas.map(async elemento => {
+    musicas.musicas_link.map(async elemento => {
       const entidades = await parseEntidades(elemento.letra);
       return {
         artista: elemento.artista,
@@ -39,6 +39,6 @@ async function listaParseada() {
   return resultados;
 }
 
-listaParseada().then(data => {
-  console.log(data);
-});
+listaParseada().then(elemento =>
+  console.log(elemento)
+)
