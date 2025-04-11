@@ -41,12 +41,10 @@ async function listaParseada() {
     return resultados;
 }
 
-
-
 async function pageRankSimplificado() {
 
     const dadosArtistas= await listaParseada();
-
+    
     const normalizar = nome => nome
         .toLowerCase()
         .normalize("NFD")
@@ -54,10 +52,21 @@ async function pageRankSimplificado() {
         .replace(/\s+/g, " ")            // remove espaços duplicados
         .trim();
 
+    // Criando Set, pois temos valores unicos    
     const nomes = [...new Set(
             dadosArtistas.map(e => normalizar(e.artista)))];
 
+    // Criando a estrutura {'gabriel o pensador': 0, 'chico buarque': 1}        
+    const criarIndice = nomes => Object.fromEntries(nomes.map((nome, indice) => [nome, indice]));        
+
+    // Numero de nós    
+    const N = Object.keys(nomes).length;
+
     console.log(nomes)
+
+    console.log(criarIndice(nomes))
+
+    console.log(N)
         
 
 };
