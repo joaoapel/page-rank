@@ -59,7 +59,6 @@ async function pageRankSimplificado() {
     // Criando a estrutura {'gabriel o pensador': 0, 'chico buarque': 1}        
     const criarIndice = nomes => Object.fromEntries(nomes.map((nome, indice) => [nome, indice]));
 
-
     const indices = criarIndice(nomes);
 
     const construirMatrizAdjacencia = (dados, indices) => {
@@ -91,8 +90,10 @@ async function pageRankSimplificado() {
                 //matriz[0][2] = 1; // Gabriel → Skank
 
                 if (idxDestino !== undefined && idxDestino !== idxOrigem) {
-                    matriz[idxOrigem][idxDestino] = 1;
+                    matriz[idxDestino][idxOrigem] = 1; // Transposta: destino -> origem
                 }
+
+
             }
         }
 
@@ -102,9 +103,31 @@ async function pageRankSimplificado() {
         return matriz;
     };
 
+    const normalizarColunas = matriz => {
+        const N = matriz.length;
+        const resultado = Array.from({ length: N }, () => Array(N).fill(0));
+
+        // Para cada coluna col, somamos todos os valores dela (de cima para baixo).
+
+        // Essa soma representa o total de "links saindo" de um nó (já que a matriz está transposta).
+
+        for (let col = 0; col < N; col++) {
+            let soma = 0;
+            for (let row = 0; row < N; row++) {
+                soma += matriz[row][col];
+            }
+            for (let row = 0; row < N; row++) {
+                resultado[row][col] = soma === 0 ? 1 / N : matriz[row][col] / soma;
+            }
+        }
+        console.table(resultado)
+        return resultado;
+    };
+
     const matrizAdj = construirMatrizAdjacencia(dadosArtistas, indices);
 
-};
+    const matrizTransicao = normalizarColunas(matrizAdj);
 
+};
 
 pageRankSimplificado();
