@@ -43,8 +43,8 @@ async function listaParseada() {
 
 async function pageRankSimplificado() {
 
-    const dadosArtistas= await listaParseada();
-    
+    const dadosArtistas = await listaParseada();
+
     const normalizar = nome => nome
         .toLowerCase()
         .normalize("NFD")
@@ -54,20 +54,55 @@ async function pageRankSimplificado() {
 
     // Criando Set, pois temos valores unicos    
     const nomes = [...new Set(
-            dadosArtistas.map(e => normalizar(e.artista)))];
+        dadosArtistas.map(e => normalizar(e.artista)))];
 
     // Criando a estrutura {'gabriel o pensador': 0, 'chico buarque': 1}        
-    const criarIndice = nomes => Object.fromEntries(nomes.map((nome, indice) => [nome, indice]));        
+    const criarIndice = nomes => Object.fromEntries(nomes.map((nome, indice) => [nome, indice]));
 
-    // Numero de nós    
-    const N = Object.keys(nomes).length;
 
-    console.log(nomes)
+    const indices = criarIndice(nomes);
 
-    console.log(criarIndice(nomes))
+    const construirMatrizAdjacencia = (dados, indices) => {
+        const N = Object.keys(indices).length;
+        const matriz = Array.from({ length: N }, () => Array(N).fill(0));
 
-    console.log(N)
-        
+        for (const item of dados) {
+            const artistaOriginal = item.artista;
+            const origem = normalizar(artistaOriginal);
+
+            //indices['skank'] => retorna o indice 2
+            const idxOrigem = indices[origem];
+
+            console.log(`\nArtista: ${artistaOriginal} (normalizado: ${origem}) - índice: ${idxOrigem}`);
+
+            const entidadesValidas = (item.entidades || []).filter(ent => ent !== ent.toLowerCase());
+            for (const entidade of entidadesValidas) {
+                const entidadeOriginal = entidade;
+                const destino = normalizar(entidadeOriginal);
+                const idxDestino = indices[destino];
+
+                //const entidadeOriginal = 'Michael Jackson';
+                //const destino = normalizar(entidadeOriginal); // => 'michael jackson'
+                //const idxDestino = indices[destino]; // => undefined (pois Michael Jackson não está na lista)
+
+                console.log(`  Entidade: ${entidadeOriginal} (normalizada: ${destino}) - índice: ${idxDestino}`);
+
+                //matriz[0][1] = 1; // Gabriel → Chico
+                //matriz[0][2] = 1; // Gabriel → Skank
+
+                if (idxDestino !== undefined && idxDestino !== idxOrigem) {
+                    matriz[idxOrigem][idxDestino] = 1;
+                }
+            }
+        }
+
+        console.log("\nMatriz de Adjacência:");
+        console.table(matriz);
+
+        return matriz;
+    };
+
+    const matrizAdj = construirMatrizAdjacencia(dadosArtistas, indices);
 
 };
 
