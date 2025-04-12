@@ -61,6 +61,8 @@ async function pageRankSimplificado() {
 
     const indices = criarIndice(nomes);
 
+    console.log(indices)
+
     const construirMatrizAdjacencia = (dados, indices) => {
         const N = Object.keys(indices).length;
         const matriz = Array.from({ length: N }, () => Array(N).fill(0));
@@ -111,6 +113,12 @@ async function pageRankSimplificado() {
 
         // Essa soma representa o total de "links saindo" de um nó (já que a matriz está transposta).
 
+        //resultado[0][0] = 0 / 2 = 0
+
+        //resultado[1][0] = 1 / 2 = 0.5
+
+        //resultado[2][0] = 1 / 2 = 0.5
+
         for (let col = 0; col < N; col++) {
             let soma = 0;
             for (let row = 0; row < N; row++) {
@@ -120,13 +128,56 @@ async function pageRankSimplificado() {
                 resultado[row][col] = soma === 0 ? 1 / N : matriz[row][col] / soma;
             }
         }
+        console.log("\nMatriz Normalizada:");
         console.table(resultado)
         return resultado;
     };
 
+    const aplicarPageRank = (matriz, damping = 0.85, tolerancia = 1e-6, maxIter = 100) => {
+        const N = matriz.length;
+        let ranks = Array(N).fill(1 / N);
+        let convergiu = false;
+
+        console.log("\nIteração inicial:", ranks);
+
+        for (let i = 0; i < maxIter && !convergiu; i++) {
+            const novaDistribuicao = math.multiply(matriz, ranks)
+                .map(val => (damping * val) + ((1 - damping) / N));
+
+            // Calcula a diferença absoluta total (norma L1) entre os ranks anteriores e os novos. Isso mede o quanto o vetor mudou. 
+            
+            // diff = |0.333 - 0.1665| + |0.333 - 0.606| + |0.333 - 0.1665| ≈ 0.5
+
+            const diff = math.norm(math.subtract(ranks, novaDistribuicao), 1);
+
+            convergiu = diff < tolerancia;
+            ranks = novaDistribuicao;
+
+            console.log(`Iteração ${i + 1} - diferença: ${diff.toFixed(10)}`);
+            console.log("Ranks:", ranks.map(v => v.toFixed(5)));
+        }
+
+        return ranks;
+    };
+
+    const exibirTopRank = (nomes, ranks, top = 10) => {
+        return nomes
+            .map((nome, i) => ({ nome, rank: ranks[i] }))
+            .sort((a, b) => b.rank - a.rank)
+            .slice(0, top);
+    };
+
+
     const matrizAdj = construirMatrizAdjacencia(dadosArtistas, indices);
 
     const matrizTransicao = normalizarColunas(matrizAdj);
+
+    const ranks = aplicarPageRank(matrizTransicao);
+
+    const top = exibirTopRank(nomes, ranks);
+
+    console.log("\nTop artistas por influência:");
+    top.forEach((el, i) => console.log(`${i + 1}. ${el.nome} - ${el.rank.toFixed(5)}`));
 
 };
 
